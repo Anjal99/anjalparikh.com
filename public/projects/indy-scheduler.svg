@@ -14,11 +14,11 @@
   <rect width="1000" height="1000" fill="#0a0a0a"/>
   <rect width="1000" height="1000" fill="url(#grid)"/>
   <rect width="1000" height="1000" fill="url(#glow)"/>
-  <text x="500.0" y="382" fill="#8a8a8a" text-anchor="middle"
-        font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="30"
-        letter-spacing="10">ROUTING &amp; SCHEDULING AGENT</text>
-  <text x="500.0" y="542" fill="#f5f5f5" text-anchor="middle"
-        font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="124"
+  <text x="500.0" y="464" fill="#8a8a8a" text-anchor="middle"
+        font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="22"
+        letter-spacing="8">ROUTING AGENT</text>
+  <text x="500.0" y="525" fill="#f5f5f5" text-anchor="middle"
+        font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="72"
         font-weight="700" letter-spacing="1">JOB SCHEDULER</text>
-  <rect x="440.0" y="618" width="120" height="4" rx="2" fill="url(#g)"/>
+  <rect x="440.0" y="565" width="120" height="4" rx="2" fill="url(#g)"/>
 </svg>

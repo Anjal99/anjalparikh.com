@@ -12,7 +12,7 @@ const Works = () => (
   <section
     id="work"
     aria-labelledby="work-heading"
-    className="bg-bg py-12 md:py-16"
+    className="bg-bg py-8 md:py-10"
   >
     <div className="mx-auto max-w-[1200px] px-6 md:px-10 lg:px-16">
       <SectionHeader
@@ -31,7 +31,7 @@ const Works = () => (
         }
       />
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-12 md:gap-6">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-12 md:gap-3">
         {projects.map((project, i) => (
           <motion.div
             key={project.slug}
@@ -47,7 +47,7 @@ const Works = () => (
                 src={project.image}
                 alt={project.title}
                 loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                className="absolute inset-0 h-full w-full object-contain object-center"
               />
 
               <div
@@ -81,13 +81,13 @@ const Works = () => (
 
       <motion.p
         {...fadeUp}
-        className="mt-8 text-center text-xs text-muted md:text-left"
+        className="mt-5 text-center text-xs text-muted md:text-left"
       >
         Most client work sits in private repositories, so the code isn't public.
         Happy to walk through any of it on a call.
       </motion.p>
 
-      <div className="mt-8 flex justify-center md:hidden">
+      <div className="mt-5 flex justify-center md:hidden">
         <PillButton href="mailto:anjal.parikh@gmail.com">
           Ask about a project
         </PillButton>

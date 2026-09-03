@@ -65,17 +65,17 @@ export const SectionHeader = ({
 }: SectionHeaderProps) => (
   <motion.div
     {...fadeUp}
-    className={`mb-12 flex flex-wrap items-end justify-between gap-8 md:mb-16 ${
+    className={`mb-6 flex flex-wrap items-end justify-between gap-4 md:mb-8 ${
       center ? "flex-col items-center text-center" : ""
     }`}
   >
     <div className={center ? "flex flex-col items-center" : ""}>
-      <span className="mb-4 block text-xs text-muted uppercase tracking-[0.3em]">
+      <span className="mb-2 block text-xs text-muted uppercase tracking-[0.3em]">
         {eyebrow}
       </span>
       <h2
         id={headingId}
-        className="display-tracking mb-4 font-display text-5xl leading-none text-text-primary md:text-6xl lg:text-7xl"
+        className="display-tracking mb-2 font-display text-5xl leading-none text-text-primary md:text-6xl lg:text-7xl"
       >
         {heading}
       </h2>

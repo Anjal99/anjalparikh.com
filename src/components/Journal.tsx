@@ -36,7 +36,7 @@ const Journal = () => (
   <section
     id="journal"
     aria-labelledby="journal-heading"
-    className="bg-bg py-16 md:py-24"
+    className="bg-bg py-8 md:py-10"
   >
     <div className="mx-auto max-w-[1200px] px-6 md:px-10 lg:px-16">
       <SectionHeader
@@ -55,7 +55,7 @@ const Journal = () => (
         }
       />
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         {ENTRIES.map((entry, i) => (
           <motion.a
             key={entry.title}
@@ -90,7 +90,7 @@ const Journal = () => (
         ))}
       </div>
 
-      <div className="mt-10 flex justify-center md:hidden">
+      <div className="mt-6 flex justify-center md:hidden">
         <PillButton href="#">View all</PillButton>
       </div>
     </div>
