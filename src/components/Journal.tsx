@@ -1,42 +1,13 @@
 import { motion } from "framer-motion";
-import { PillButton, SectionHeader, fadeUp } from "./ui";
-
-const ENTRIES = [
-  {
-    title: "Designing with restraint",
-    readTime: "4 min read",
-    date: "Aug 2026",
-    image:
-      "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=400&q=80",
-  },
-  {
-    title: "The case for motion in interfaces",
-    readTime: "6 min read",
-    date: "Jul 2026",
-    image:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&q=80",
-  },
-  {
-    title: "Systems over screens",
-    readTime: "5 min read",
-    date: "May 2026",
-    image:
-      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&q=80",
-  },
-  {
-    title: "Notes on typography at scale",
-    readTime: "8 min read",
-    date: "Mar 2026",
-    image:
-      "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=400&q=80",
-  },
-];
+import { Link } from "react-router-dom";
+import { SectionHeader, fadeUp } from "./ui";
+import { formatDuration, journal } from "../lib/journal";
 
 const Journal = () => (
   <section
     id="journal"
     aria-labelledby="journal-heading"
-    className="bg-bg py-8 md:py-10"
+    className="bg-bg pt-4 pb-16 md:pt-6 md:pb-24"
   >
     <div className="mx-auto max-w-[1200px] px-6 md:px-10 lg:px-16">
       <SectionHeader
@@ -44,54 +15,59 @@ const Journal = () => (
         eyebrow="Journal"
         heading={
           <>
-            Recent <span className="accent-text">thoughts</span>
+            Learning in <span className="accent-text">public</span>
           </>
         }
-        subtext="Occasional writing on design, engineering, and the space between."
-        action={
-          <PillButton href="#" className="hidden md:inline-flex">
-            View all
-          </PillButton>
-        }
+        subtext="Short lessons on building with AI. Recorded walkthroughs of the tools and workflows I actually use."
       />
 
-      <div className="flex flex-col gap-2">
-        {ENTRIES.map((entry, i) => (
-          <motion.a
-            key={entry.title}
-            href="#"
-            onClick={(e) => e.preventDefault()}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {journal.map((entry, i) => (
+          <motion.div
+            key={entry.slug}
             {...fadeUp}
-            transition={{ ...fadeUp.transition, delay: i * 0.08 }}
-            className="group flex items-center gap-6 rounded-[40px] border border-stroke bg-surface/30 p-4 transition-colors duration-300 hover:bg-surface sm:rounded-full"
+            transition={{ ...fadeUp.transition, delay: i * 0.1 }}
           >
-            <img
-              src={entry.image}
-              alt=""
-              loading="lazy"
-              className="h-16 w-16 shrink-0 rounded-full border border-stroke object-cover sm:h-20 sm:w-20"
-            />
-            <div className="min-w-0 flex-1">
-              <h3 className="truncate text-base text-text-primary transition-colors duration-300 sm:text-xl">
-                {entry.title}
-              </h3>
-              <p className="mt-1 text-xs text-muted sm:hidden">
-                {entry.readTime} · {entry.date}
-              </p>
-            </div>
-            <div className="ml-auto hidden shrink-0 items-center gap-6 pr-4 text-xs text-muted sm:flex">
-              <span>{entry.readTime}</span>
-              <span>{entry.date}</span>
-              <span className="text-base text-text-primary opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100">
-                →
+            <Link
+              to={`/journal/${entry.slug}`}
+              className="group block overflow-hidden rounded-3xl border border-stroke bg-surface/30 transition-colors duration-300 hover:bg-surface"
+            >
+              <span className="relative block aspect-video overflow-hidden">
+                <img
+                  src={entry.poster}
+                  alt=""
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <span className="absolute inset-0 bg-bg/25 transition-colors duration-300 group-hover:bg-bg/45" />
+                <span className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <span className="relative rounded-full p-[2px] accent-gradient-animated">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-bg text-sm text-text-primary">
+                      ▶
+                    </span>
+                  </span>
+                </span>
+                <span className="absolute bottom-3 right-3 rounded-full border border-white/20 bg-black/50 px-2.5 py-1 text-[11px] text-white backdrop-blur-md">
+                  {formatDuration(entry.durationSec)}
+                </span>
               </span>
-            </div>
-          </motion.a>
-        ))}
-      </div>
 
-      <div className="mt-6 flex justify-center md:hidden">
-        <PillButton href="#">View all</PillButton>
+              <span className="block p-5">
+                <span className="mb-2 block text-xs text-muted uppercase tracking-[0.3em]">
+                  {entry.kicker}
+                </span>
+                <span className="block text-lg leading-snug text-text-primary">
+                  {entry.title}
+                </span>
+                {entry.blurb && (
+                  <span className="mt-2 block text-sm leading-relaxed text-muted">
+                    {entry.blurb}
+                  </span>
+                )}
+              </span>
+            </Link>
+          </motion.div>
+        ))}
       </div>
     </div>
   </section>

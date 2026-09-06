@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Index from "./pages/Index";
 import Resume from "./pages/Resume";
 import ProjectDetail from "./pages/ProjectDetail";
+import JournalDetail from "./pages/JournalDetail";
 
 // Opacity-only transition: a transform/filter on this wrapper would break
 // position:fixed descendants (navbar, GSAP pinning).
@@ -42,6 +43,14 @@ const App = () => {
           element={
             <PageTransition>
               <ProjectDetail />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/journal/:slug"
+          element={
+            <PageTransition>
+              <JournalDetail />
             </PageTransition>
           }
         />
