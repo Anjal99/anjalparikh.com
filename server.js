@@ -76,9 +76,16 @@ createServer((req, res) => {
     file = candidate;
   }
 
-  // Unknown path with no extension is a client route: hand back the shell.
+  // A missing path WITH an extension is a real 404 (an image, a PDF). Falling
+  // back to the shell there hands crawlers HTML in place of the asset, which
+  // silently breaks link previews. Only extensionless paths are client routes.
   const isAsset = file !== null;
-  if (!isAsset) file = join(ROOT, "index.html");
+  if (!isAsset) {
+    if (extname(url.pathname)) {
+      return send(res, 404, { "Content-Type": "text/plain; charset=utf-8" });
+    }
+    file = join(ROOT, "index.html");
+  }
 
   if (!existsSync(file)) return send(res, 404, { "Content-Type": "text/plain" });
 
