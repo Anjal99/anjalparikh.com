@@ -9,6 +9,27 @@ import { embedUrl, formatDuration, type JournalEntry } from "../lib/journal";
 const VideoEmbed = ({ entry }: { entry: JournalEntry }) => {
   const [active, setActive] = useState(false);
 
+  if (entry.provider === "self-hosted") {
+    return (
+      <div
+        className={`mx-auto overflow-hidden rounded-3xl border border-stroke bg-black ${
+          entry.orientation === "portrait" ? "max-w-[420px]" : "w-full"
+        }`}
+      >
+        <video
+          src={entry.videoSrc}
+          poster={entry.poster}
+          controls
+          playsInline
+          preload="metadata"
+          className={entry.orientation === "portrait" ? "aspect-[9/16] w-full" : "aspect-video w-full"}
+        >
+          Your browser does not support embedded video.
+        </video>
+      </div>
+    );
+  }
+
   if (active) {
     return (
       <div className="aspect-video w-full overflow-hidden rounded-3xl border border-stroke bg-black">

@@ -1,13 +1,11 @@
 // Production server for Railway.
-// Zero dependencies on purpose: fewer packages, smaller supply-chain surface.
-// Does two jobs: serve the built SPA (with a history fallback so /resume and
-// /projects/* survive a refresh) and set security headers a static host won't.
+// Serves the built SPA, preserves client-side routes, and applies security headers.
 import { createServer } from "node:http";
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { extname, join, normalize, resolve } from "node:path";
 
 const PORT = Number(process.env.PORT) || 8080;
-const ROOT = resolve("dist");
+const ROOT = resolve(process.env.STATIC_ROOT || "dist");
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -19,6 +17,7 @@ const TYPES = {
   ".png": "image/png",
   ".gif": "image/gif",
   ".webp": "image/webp",
+  ".mp4": "video/mp4",
   ".pdf": "application/pdf",
   ".xml": "application/xml; charset=utf-8",
   ".txt": "text/plain; charset=utf-8",
@@ -27,11 +26,9 @@ const TYPES = {
   ".json": "application/json; charset=utf-8",
 };
 
-// Only the origins this site actually talks to.
 const CSP = [
   "default-src 'self'",
   "script-src 'self'",
-  // GSAP and Framer Motion animate via inline style attributes.
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob:",
@@ -55,45 +52,111 @@ const securityHeaders = {
   "Cross-Origin-Opener-Policy": "same-origin",
 };
 
-const send = (res, status, headers, stream) => {
+const send = (req, res, status, headers, stream) => {
   res.writeHead(status, { ...securityHeaders, ...headers });
-  if (stream) stream.pipe(res);
-  else res.end();
+  if (req.method === "HEAD" || !stream) res.end();
+  else stream.pipe(res);
+};
+
+const parseByteRange = (header, size) => {
+  const match = /^bytes=(\d*)-(\d*)$/.exec(header);
+  if (!match || (!match[1] && !match[2])) return null;
+
+  let start;
+  let end;
+  if (!match[1]) {
+    const suffixLength = Number(match[2]);
+    if (!Number.isInteger(suffixLength) || suffixLength <= 0) return null;
+    start = Math.max(size - suffixLength, 0);
+    end = size - 1;
+  } else {
+    start = Number(match[1]);
+    end = match[2] ? Number(match[2]) : size - 1;
+  }
+
+  if (
+    !Number.isInteger(start) ||
+    !Number.isInteger(end) ||
+    start < 0 ||
+    start >= size ||
+    end < start
+  ) {
+    return null;
+  }
+
+  return { start, end: Math.min(end, size - 1) };
 };
 
 createServer((req, res) => {
   if (req.method !== "GET" && req.method !== "HEAD") {
-    return send(res, 405, { Allow: "GET, HEAD" });
+    return send(req, res, 405, { Allow: "GET, HEAD" });
   }
 
-  const url = new URL(req.url, "http://localhost");
-  // normalize + prefix check keeps ../ traversal out of the filesystem
-  const candidate = resolve(join(ROOT, normalize(decodeURIComponent(url.pathname))));
-  const inRoot = candidate === ROOT || candidate.startsWith(ROOT + "/");
+  let pathname;
+  try {
+    pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
+  } catch {
+    return send(req, res, 400, { "Content-Type": "text/plain; charset=utf-8" });
+  }
+
+  const candidate = resolve(join(ROOT, normalize(pathname)));
+  const inRoot = candidate === ROOT || candidate.startsWith(`${ROOT}/`);
 
   let file = null;
   if (inRoot && existsSync(candidate) && statSync(candidate).isFile()) {
     file = candidate;
   }
 
-  // A missing path WITH an extension is a real 404 (an image, a PDF). Falling
-  // back to the shell there hands crawlers HTML in place of the asset, which
-  // silently breaks link previews. Only extensionless paths are client routes.
   const isAsset = file !== null;
   if (!isAsset) {
-    if (extname(url.pathname)) {
-      return send(res, 404, { "Content-Type": "text/plain; charset=utf-8" });
+    if (extname(pathname)) {
+      return send(req, res, 404, { "Content-Type": "text/plain; charset=utf-8" });
     }
     file = join(ROOT, "index.html");
   }
 
-  if (!existsSync(file)) return send(res, 404, { "Content-Type": "text/plain" });
+  if (!existsSync(file)) {
+    return send(req, res, 404, { "Content-Type": "text/plain; charset=utf-8" });
+  }
 
-  const type = TYPES[extname(file).toLowerCase()] || "application/octet-stream";
-  // Vite fingerprints assets, so they can be cached hard. The shell cannot.
+  const extension = extname(file).toLowerCase();
+  const type = TYPES[extension] || "application/octet-stream";
   const cache = isAsset && /\/assets\//.test(file)
     ? "public, max-age=31536000, immutable"
     : "no-cache";
+  const size = statSync(file).size;
+  const headers = {
+    "Content-Type": type,
+    "Cache-Control": cache,
+    "Content-Length": String(size),
+  };
 
-  send(res, 200, { "Content-Type": type, "Cache-Control": cache }, createReadStream(file));
-}).listen(PORT, () => console.log(`serving dist/ on :${PORT}`));
+  if (extension === ".mp4") {
+    headers["Accept-Ranges"] = "bytes";
+    if (req.headers.range) {
+      const range = parseByteRange(req.headers.range, size);
+      if (!range) {
+        return send(req, res, 416, {
+          ...headers,
+          "Content-Range": `bytes */${size}`,
+          "Content-Length": "0",
+        });
+      }
+
+      const length = range.end - range.start + 1;
+      return send(
+        req,
+        res,
+        206,
+        {
+          ...headers,
+          "Content-Length": String(length),
+          "Content-Range": `bytes ${range.start}-${range.end}/${size}`,
+        },
+        createReadStream(file, { start: range.start, end: range.end }),
+      );
+    }
+  }
+
+  return send(req, res, 200, headers, createReadStream(file));
+}).listen(PORT, () => console.log(`serving ${ROOT} on :${PORT}`));
