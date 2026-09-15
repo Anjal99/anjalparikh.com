@@ -26,6 +26,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://anjalparikh.com/learning/claude-bootcamp</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://anjalparikh.com/learning/hermes-101</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://anjalparikh.com/journal/ai-operating-system</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -37,6 +47,46 @@
   </url>
   <url>
     <loc>https://anjalparikh.com/journal/ai-native-workflows</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://anjalparikh.com/journal/three-pillars-of-hermes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://anjalparikh.com/journal/orchestration-and-subagents</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://anjalparikh.com/journal/keeping-main-agent-free</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://anjalparikh.com/journal/how-hermes-selects-skills</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://anjalparikh.com/journal/building-reusable-skills</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://anjalparikh.com/journal/memory-and-context-with-obsidian</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://anjalparikh.com/journal/delegating-real-work</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://anjalparikh.com/journal/expert-knowledge-to-campaign</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
